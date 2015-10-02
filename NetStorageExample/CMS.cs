@@ -14,6 +14,11 @@
 //
 // Author: colinb@akamai.com  (Colin Bendell)
 //
+// https://github.com/akamai-open/NetStorageKit-C-Sharp.git
+//
+//
+
+
 
 using System;
 using System.Collections.Generic;
@@ -111,7 +116,9 @@ namespace Akamai.NetStorage
 
             switch (action)
             {
-                case " delete":
+                case "delete":
+                    success = ns.Delete(path);
+                    break;
                 case "dir":
                     result = ns.Dir(path);
                     break;
