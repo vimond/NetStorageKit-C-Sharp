@@ -119,6 +119,7 @@ namespace Akamai.NetStorage
                 case "delete":
                     success = ns.Delete(path);
                     break;
+
                 case "dir":
                     result = ns.Dir(path);
                     break;
