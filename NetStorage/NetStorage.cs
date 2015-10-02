@@ -51,6 +51,7 @@ namespace Akamai.NetStorage
         public string Key { get; private set; }
         public bool UseSSL { get; private set; }
         public WebRequest Request { get; set; }
+        private int test = 4;
 
         public NetStorage(string hostname, string username, string key, bool useSSL = false)
         {
