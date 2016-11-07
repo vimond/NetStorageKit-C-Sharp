@@ -15,4 +15,7 @@
     <copyright>Copyright 2015</copyright>
     <tags>Tag1 Tag2</tags>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\" target="lib\" exclude="*.cs;*.txt;*.pdb"/>
+  </files>
 </package>
