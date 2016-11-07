@@ -12,6 +12,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{9FD1EF66-2E44-4EDC-B623-625883FB6086}"
+	ProjectSection(SolutionItems) = preProject
+		tools\nuget.exe = tools\nuget.exe
+		tools\psake.cmd = tools\psake.cmd
+		tools\psake.ps1 = tools\psake.ps1
+		tools\psake.psm1 = tools\psake.psm1
+		tools\psake_ext.ps1 = tools\psake_ext.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
