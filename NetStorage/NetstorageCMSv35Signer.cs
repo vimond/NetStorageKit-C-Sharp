@@ -242,6 +242,12 @@ namespace Akamai.Netstorage
             }
             catch (WebException e)
             {
+                HttpWebResponse errorResponse = e.Response as HttpWebResponse;
+                if (errorResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw e;
+                }
+                
                 // non 200 OK responses throw exceptions.
                 // is this because of Time drift? can we re-try?
                 using (response = e.Response)
