@@ -77,6 +77,17 @@ namespace Akamai.NetStorage
                 uploadStream).Execute(this.Request);
         }
 
+        internal Stream execute(string method, string path, APIParams acsParams, int timeout, Stream uploadStream = null)
+        {
+            return new NetstorageCMSv35Signer(
+                method,
+                this.getNetStorageUri(path),
+                this.Username,
+                this.Key,
+                acsParams,
+                uploadStream).Execute(timeout, this.Request);
+        }
+
         public bool Delete(string path)
         {
             using (execute("POST", path, new APIParams() { Action = "delete" })) { }
@@ -139,7 +150,7 @@ namespace Akamai.NetStorage
 
         public bool QuickDelete(string path)
         {
-            using (execute("PUT", path, new APIParams() { Action = "quick-delete", QuickDelete = "imreallyreallysure" })) { }
+            using (execute("PUT", path, new APIParams() { Action = "quick-delete", QuickDelete = "imreallyreallysure" }, 10000)) { }
             return true;
         }
 
