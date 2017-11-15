@@ -97,7 +97,7 @@ namespace Akamai.NetStorage
         public Stream Dir(string path, string format = "xml")
         {
             //TODO: strip final slash on dir command
-            return execute("GET", path, new APIParams() { Action = "dir", Format = format });
+            return execute("GET", path, new APIParams() { Action = "dir", Format = format }, 10000);
         }
 
         public Stream Download(string path)

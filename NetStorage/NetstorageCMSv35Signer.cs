@@ -203,59 +203,7 @@ namespace Akamai.Netstorage
         /// <returns> the output stream of the response</returns>
         public Stream Execute(WebRequest request = null)
         {
-            //Make sure that this connection will behave nicely with multiple calls in a connection pool.
-            ServicePointManager.EnableDnsRoundRobin = true;
-
-            request = Sign(request);
-            if (this.Method == "PUT" || this.Method == "POST")
-            {
-                //Disable the nastiness of Expect100Continue
-                ServicePointManager.Expect100Continue = false;
-                //Another hack to avoid problems with the read timeout even though the 
-                //bytes are being sent to the client. .NET doesn't distinguish between
-                //a read timeout and a writetimeout.
-                request.Timeout = System.Threading.Timeout.Infinite;
-
-
-                if (this.UploadStream == null)
-                    request.ContentLength = 0;
-                else if (this.UploadStream.CanSeek)
-                    request.ContentLength = this.UploadStream.Length;
-                else if (request is HttpWebRequest)
-                    ((HttpWebRequest)request).SendChunked = true;
-
-                if (this.UploadStream != null)
-                {
-                    // avoid internal memory allocation before buffering the output
-                    if (request is HttpWebRequest)
-                        ((HttpWebRequest)request).AllowWriteStreamBuffering = false;
-
-                    using (Stream requestStream = request.GetRequestStream())
-                    using (this.UploadStream)
-                        this.UploadStream.CopyTo(requestStream, 32*1024);
-                }
-            }
-
-            WebResponse response = null;
-            try
-            {
-                response = request.GetResponse();
-            }
-            catch (WebException e)
-            {
-                HttpWebResponse errorResponse = e.Response as HttpWebResponse;
-                if (errorResponse.StatusCode == HttpStatusCode.NotFound)
-                {
-                    throw e;
-                }
-                
-                // non 200 OK responses throw exceptions.
-                // is this because of Time drift? can we re-try?
-                using (response = e.Response)
-                    Validate(response);
-            }
-
-            return response.GetResponseStream();
+            return Execute(0, request);
         }
 
         public Stream Execute(int timeout, WebRequest request = null)
@@ -271,8 +219,7 @@ namespace Akamai.Netstorage
                 //Another hack to avoid problems with the read timeout even though the 
                 //bytes are being sent to the client. .NET doesn't distinguish between
                 //a read timeout and a writetimeout.
-                request.Timeout = timeout;
-
+                request.Timeout = timeout == 0 ? Timeout.Infinite : timeout;
 
                 if (this.UploadStream == null)
                     request.ContentLength = 0;
@@ -300,10 +247,13 @@ namespace Akamai.Netstorage
             }
             catch (WebException e)
             {
-                HttpWebResponse errorResponse = e.Response as HttpWebResponse;
-                if (errorResponse.StatusCode == HttpStatusCode.NotFound)
+                if (e.Response is HttpWebResponse)
                 {
-                    throw e;
+                    HttpWebResponse errorResponse = e.Response as HttpWebResponse;
+                    if (errorResponse.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        throw e;
+                    }
                 }
 
                 // non 200 OK responses throw exceptions.
@@ -312,7 +262,7 @@ namespace Akamai.Netstorage
                     Validate(response);
             }
 
-            return response.GetResponseStream();
+            return response == null ? null : response.GetResponseStream();
         }
 
         /// <summary>
