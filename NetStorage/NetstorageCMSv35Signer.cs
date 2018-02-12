@@ -253,6 +253,11 @@ namespace Akamai.Netstorage
                     }
                 }
 
+                if (e.Status == WebExceptionStatus.Timeout)
+                {
+                    throw e;
+                }
+
                 // non 200 OK responses throw exceptions.
                 // is this because of Time drift? can we re-try?
                 using (response = e.Response)
